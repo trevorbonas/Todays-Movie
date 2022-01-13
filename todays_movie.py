@@ -1,6 +1,4 @@
-import csv
 import random
-import readline
 import numpy as numpy
 
 input_file = open("movies.txt")
@@ -47,8 +45,3 @@ while ask != "Q" and ask != "q":
 		printWatched(reserved, movies)
 
 print("Goodbye")
-
-
-
-
-
