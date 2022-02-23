@@ -1,47 +1,52 @@
 import random
 import numpy as numpy
 
-input_file = open("movies.txt")
+def printWatched():
+	input_file = open("movies.txt")
+	total_num_movies = len(input_file.readlines())
+	input_file.close()
 
-movies = []
+	watched = []
+	watched = numpy.loadtxt("watched.npy", dtype='str', delimiter='\n')
 
-for line in input_file:
-	datalist = line.splitlines()
-	movies += datalist
+	for movie in watched:
+		print(movie)
 
-reserved = []
-reserved = numpy.loadtxt("movie_history.npy", dtype=int)
+	print(str(len(watched))  + "/" + str(total_num_movies) + "\n")
 
-def printWatched(reserved, movies):
-	for num in reserved:
-		print(str(num) + " " + movies[num])
-	print(str(len(reserved))  + "/" + str(len(movies)) + "\n")
+def genMovie():
+	# Get number of total movies
+	input_file = open("movies.txt")
+	total_num_movies = len(input_file.readlines())
+	input_file.close()
 
-def genMovie(reserved, movies):
-	rand_index = 0
-	while True:
-		rand_index = random.randint(0, 1209)
-		if rand_index not in reserved:
-			break
-		if rand_index in reserved and reserved.size == movies.size:
-			print("You have watched all " + str(movies.size) + " movies")
-			exit()
+	watched = []
+	watched = numpy.loadtxt("watched.npy", dtype='str', delimiter='\n')
 
-	reserved = numpy.append(reserved, rand_index)
+	if len(watched) == total_num_movies:
+		print("You have watched all " + str(total_num_movies) + " movies")
+		exit()
 
-	numpy.savetxt("movie_history.npy", reserved, fmt='%d')
+	to_watch = []
+	to_watch = numpy.loadtxt("to_watch.npy", dtype='str', delimiter='\n')
 
-	todays_movie = movies[rand_index]
+	rand_index = random.randint(0, len(to_watch))
+	todays_movie = to_watch[rand_index]
+	to_watch = numpy.delete(to_watch, rand_index)
+
+	watched = numpy.append(watched, todays_movie)
+	numpy.savetxt("watched.npy", watched, fmt='%s', delimiter=' ')
+	numpy.savetxt("to_watch.npy", to_watch, fmt='%s', delimiter=' ')
 
 	print("Today's movie is:\n" + todays_movie)
-	print("Number " + str(len(reserved)) + " of 1222\n")
+	print("Number " + str(len(watched)) + " of " + str(total_num_movies) + "\n")
 
 ask = ""
 while ask != "Q" and ask != "q":
 	ask = input("[G] generate movie\n[W] show watched movies\n[Q] quit\n> ")
 	if ask == "G" or ask == "g":
-		genMovie(reserved, movies)
+		genMovie()
 	elif ask == "W" or ask == "w":
-		printWatched(reserved, movies)
+		printWatched()
 
 print("Goodbye")
